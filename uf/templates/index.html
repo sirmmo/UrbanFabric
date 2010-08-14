@@ -75,7 +75,13 @@ resize = function (){
 $('#map').width($(window).width());
 $('#map').height($(window).height());
 }
+localize = function(position){
+ initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+      map.setCenter(initialLocation);
+    
+}
 $(function(){
+var map = null;
 $('#map').width($(window).width());
 $('#map').height($(window).height());
 var browserSupportFlag =  new Boolean();
@@ -96,22 +102,10 @@ var browserSupportFlag =  new Boolean();
 var map = new google.maps.Map(document.getElementById("map"), myOptions);
 if(navigator.geolocation) {
     browserSupportFlag = true;
-    navigator.geolocation.getCurrentPosition(function(position) {
-      initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-      map.setCenter(initialLocation);
-    }, function() {
+    navigator.geolocation.getCurrentPosition(localize, function() {
       handleNoGeolocation(browserSupportFlag);
     });
-  // Try Google Gears Geolocation
-  } else if (google.gears) {
-    browserSupportFlag = true;
-    var geo = google.gears.factory.create('beta.geolocation');
-    geo.getCurrentPosition(function(position) {
-      initialLocation = new google.maps.LatLng(position.latitude,position.longitude);
-      map.setCenter(initialLocation);
-    }, function() {
-      handleNoGeoLocation(browserSupportFlag);
-    });
+  
   // Browser doesn't support Geolocation
   } else {
     browserSupportFlag = false;
