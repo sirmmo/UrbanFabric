@@ -76,7 +76,7 @@ class Classification(models.Model):
 
 #production
 class Production(models.Model):
-    icon = models.ImageField(upload_to = "img/prod/")
+    icon = models.ImageField(upload_to = "img/prods/")
     name=models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
     parent = models.ForeignKey('Production', blank = True, null=True, default = None)
@@ -94,10 +94,10 @@ class Venue(PointResource):
     description = models.TextField()
     manager = models.ForeignKey(User, related_name="manages_venues")
     classification = models.ManyToManyField(Classification, related_name="classifies")
-    products = models.ManyToManyField(Production, related_name="sold")
-
-    opening = models.ManyToManyField('Interval')
-    links = models.ManyToManyField('Link')
+    sold_products = models.ManyToManyField(Production, related_name="sold", null=True, blank=True)
+    bought_products = models.ManyToManyField(Production, related_name="bought", null=True, blank=True)
+    opening = models.ManyToManyField('Interval', null=True, blank=True)
+    links = models.ManyToManyField('Link', null=True, blank=True)
     def __unicode__(self):
         return self.name
     def save(self):
@@ -133,6 +133,7 @@ class ElementCollection(models.Model):
     color_code_back = models.CharField(max_length = 10, default="ff8c00")
     color_code_front = models.CharField(max_length = 10, default="000000")
     url = models.URLField()
+    icon = models.ImageField('img/colls/')
     def __unicode__(self):
         return self.name
 
