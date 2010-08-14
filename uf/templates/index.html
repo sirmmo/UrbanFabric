@@ -58,7 +58,7 @@
 	</style>
   </head>
   <body>
-  <div id="map">
+  <div id="ufmap">
   </div>
   
   <div id="header">
@@ -75,15 +75,15 @@ resize = function (){
 $('#map').width($(window).width());
 $('#map').height($(window).height());
 }
+
+jQuery.ufmap = null;
 localize = function(position){
  initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-      map.setCenter(initialLocation);
-    
+      jQuery.ufmap.setCenter(initialLocation);
 }
 $(function(){
-var map = null;
-$('#map').width($(window).width());
-$('#map').height($(window).height());
+$('#ufmap').width($(window).width());
+$('#ufmap').height($(window).height());
 var browserSupportFlag =  new Boolean();
  var myOptions = {
     zoom: 16,
@@ -99,7 +99,7 @@ var browserSupportFlag =  new Boolean();
 	  position: google.maps.ControlPosition.BOTTOM
     },
   };
-var map = new google.maps.Map(document.getElementById("map"), myOptions);
+jQuery.ufmap = new google.maps.Map(document.getElementById("ufmap"), myOptions);
 if(navigator.geolocation) {
     browserSupportFlag = true;
     navigator.geolocation.getCurrentPosition(localize, function() {
