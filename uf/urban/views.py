@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.utils import simplejson
 from urban.models import *
 from django.core import serializers
+from urban.forms import *
 
 def serializable(object):
     o = {}
@@ -118,3 +119,26 @@ def xuf_ping(request):
 
 def messages_by_point(request):
     pass
+
+
+def ical_by_id(request):
+    pass
+
+def form_add_user(request):
+    from django.core.urlresolvers import reverse
+    if request.method == 'POST': # If the form has been submitted...
+        form = SignUpForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            u = User()
+            u.username = form.cleaned_data['username']
+            u.password = form.cleaned_data['password1']
+            u.email = form.cleaned_data['email']
+            u.save()
+            return HttpResponse('OK')
+    else:
+        form = SignUpForm() # An unbound form
+
+    return render_to_response('form.xml', {
+        'action':reverse('form_add_user'),
+        'form': form,
+    })
