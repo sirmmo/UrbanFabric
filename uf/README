@@ -1,0 +1,5 @@
+=== Installation Instructions ===
+
+this app requires GDAL to be installed (in ubuntu apt-get install gdal-bin python-gdal)
+
+the database must be geographic and support distance calculations

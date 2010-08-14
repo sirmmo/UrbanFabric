@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.gis.db import models as gismodels
 
 #geographic
 
@@ -19,7 +20,7 @@ class GeoResource(models.Model):
         gg.save()
 
 
-class PointResource(GeographicResource):
+class PointResource(GeoResource):
     geolocation = gismodels.PointField(srid=900913)
     objects = gismodels.GeoManager()
    
@@ -28,7 +29,7 @@ class PointResource(GeographicResource):
       
         super(PointResource, self).save() # Call the "real" save() method
 
-class LineResource(GeographicResource):
+class LineResource(GeoResource):
     geolocation = gismodels.LineStringField(srid=900913)
     objects = gismodels.GeoManager()
   
@@ -37,7 +38,7 @@ class LineResource(GeographicResource):
         
         super(LineResource, self).save() # Call the "real" save() method
 
-class PolygonResource(GeographicResource):
+class PolygonResource(GeoResource):
     geolocation = gismodels.PolygonField(srid=900913)
     objects = gismodels.GeoManager()
  
@@ -49,7 +50,7 @@ class PolygonResource(GeographicResource):
 #interest area
 
 class InterestArea(PointResource):
-    radius = models.PositiveItegerField()
+    radius = models.PositiveIntegerField()
 
 #classifications
 class Classification(models.Model):
@@ -71,7 +72,7 @@ class Element(PointResource):
     name = models.CharField(max_length=400)
     slug = models.SlugField(max_length=400, unique=True)
     description = models.TextField()
-    manager = models.ForeignKey(User, related_name="manages")
+    manager = models.ForeignKey(User, related_name="manages_venues")
     intest_area = models.ForeignKey(InterestArea)
     classification = models.ManyToManyField(Classification)
     products = models.ManyToManyField(Production)
@@ -85,7 +86,11 @@ class ElementCollection(models.Model):
     name = models.CharField(max_length=400)
     slug = models.SlugField(max_length=400, unique=True)
     elements = models.ManyToManyField(Element, related_name = "collections")
-    manager = models.ForeignKey(User, related_name="manages")
-    classification = Models.ManyToManyField(CollectionClassification)
+    manager = models.ForeignKey(User, related_name="manages_groups")
+    classification = models.ManyToManyField(CollectionClassification)
 
+
+class GeoElementCollection(PolygonResource, ElementCollection):
+    wiki = models.SlugField(max_length = 250)
+    objects = gismodels.GeoManager()
 
