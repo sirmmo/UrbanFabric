@@ -5,7 +5,7 @@ from django.contrib.gis.db import models as gismodels
 #geographic
 
 class GeoResource(models.Model):
-    wkt = models.TextField(blank=False, null=True)
+    wkt = models.TextField(blank=True, null=True)
     def __unicode__(self):
         return self.subject.__unicode__()
 
@@ -75,8 +75,11 @@ class Element(PointResource):
     manager = models.ForeignKey(User, related_name="manages_venues")
     intest_area = models.ForeignKey(InterestArea)
     classification = models.ManyToManyField(Classification)
-    products = models.ManyToManyField(Production)
+    products = models.ManyToManyField(Production, related_name="sold")
 
+    def save(self):
+
+        super(Element, self).save() # Call the "real" save() method
 
 class CollectionClassification(models.Model):
     name=models.CharField(max_length=200)
@@ -93,4 +96,8 @@ class ElementCollection(models.Model):
 class GeoElementCollection(PolygonResource, ElementCollection):
     wiki = models.SlugField(max_length = 250)
     objects = gismodels.GeoManager()
+
+    def save(self):
+
+        super(GeoElementCollection, self).save() # Call the "real" save() method
 
