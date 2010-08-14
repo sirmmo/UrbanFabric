@@ -21,9 +21,9 @@ body {
 	position:absolute;
 }
  #header: {
-	 top:0px;
-	 width:100%;
-	 height:150px;
+ top:0px;
+ width:100%;
+ height:150px;
 }
 #header-decoration {
 	z-index:1000;
@@ -82,6 +82,23 @@ body {
 #header-menu {
 	font-family:'Josefin Sans Std Light', Calibri, Verdana, Helvetica, sans-serif;
 }
+.menu-item {
+	display:inline-block;
+	width:24px;
+	height:24px;
+}
+#menu-login {
+	background-image:url('/static/icons/user.png');
+}
+#menu-position {
+	background-image:url('/static/icons/where.png');
+}
+#menu-add-venue {
+	background-image:url('/static/icons/add.png');
+}
+#menu-add-venue-group {
+	background-image:url('/static/icons/add.png');
+}
 </style>
 </head>
 <body>
@@ -90,11 +107,17 @@ body {
         <div id="header-decoration"></div>
         <div id="header-image"></div>
         <div id="header-text">UrbanFabric<span id="collection-name"></span></div>
-        <div id="header-menu"> 
-                <span id="menu-login" title="Login">L</span> 
-        	<span id="menu-position" title="Where am i?">W</span> 
-                <span id="menu-add-venue" class="loggedin" title="Add Venue">+</span> 
-                <span id="menu-add-venue-group" class="loggedin" title="Add Venue Collection">+</span> </div>
+        <div id="header-menu">
+                <div id="menu-login" class="menu-item" title="Login">
+                        <div id="popup">
+                                <div><span id="get_login">Login</span>| <span id="get_signup">Sign up</span></div>
+                                <div id="lilo-form-container"></div>
+                        </div>
+                </div>
+                <div id="menu-position" class="menu-item" title="Where am i?"> </div>
+                <div id="menu-add-venue" class="loggedin menu-item" title="Add Venue"> </div>
+                <div id="menu-add-venue-group" class="loggedin menu-item" title="Add Venue Collection"> </div>
+        </div>
 </div>
 <div id="left-container">
         <div id="content"> <span class="text"> </span> </div>
@@ -143,6 +166,14 @@ localize = function(position) {
     jQuery.ufmap.setCenter(initialLocation);
 }
 $(function() {
+	
+	   $("#menu-login").click(function(e) {
+                e.preventDefault();
+                $("fieldset#signin_menu").toggle();
+                $(".signin").toggleClass("menu-open");
+            });
+	
+	$('#popup').hide();
 	$('#left-container').hide();
 	jQuery.sidebar = false;
 	resize(	jQuery.sidebar);
