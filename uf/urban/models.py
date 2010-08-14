@@ -16,11 +16,14 @@ class GeoResource(models.Model):
 
 class PointResource(GeoResource):
     geolocation = gismodels.PointField(srid=4326)
+    latitude = models.TextField(blank = True, null=True)
+    longitude = models.TextField(blank = True, null=True)
     objects = gismodels.GeoManager()
 
     def save(self):
         self.wkt = OGRGeometry(str(self.geolocation)).wkt
-      
+        self.latitude = OGRGeometry(str(self.geolocation)).y
+        self.longitude = OGRGeometry(str(self.geolocation)).x
         super(PointResource, self).save() # Call the "real" save() method
 
 class LineResource(GeoResource):
@@ -44,12 +47,16 @@ class PolygonResource(GeoResource):
 #interest area
 class InterestArea(models.Model):
     wkt = models.TextField(blank = True, null=True)
+    latitude = models.TextField(blank = True, null=True)
+    longitude = models.TextField(blank = True, null=True)
     geolocation = gismodels.PointField(srid=4326, blank = True, null=True)
     element = models.ForeignKey('Venue', related_name="interest_area")
     radius = models.PositiveIntegerField()
     def save(self):
         self.geolocation = self.element.geolocation
         self.wkt = OGRGeometry(str(self.geolocation)).wkt
+        self.latitude = OGRGeometry(str(self.geolocation)).y
+        self.longitude = OGRGeometry(str(self.geolocation)).x
         super(InterestArea, self).save() # Call the "real" save() method
 
     def __unicode__(self):
@@ -133,7 +140,7 @@ class ElementCollection(models.Model):
     color_code_back = models.CharField(max_length = 10, default="ff8c00")
     color_code_front = models.CharField(max_length = 10, default="000000")
     url = models.URLField()
-    icon = models.ImageField('img/colls/')
+    icon = models.ImageField(upload_to = 'img/colls/')
     def __unicode__(self):
         return self.name
 
