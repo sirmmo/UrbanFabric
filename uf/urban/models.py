@@ -103,6 +103,7 @@ class CollectionClassification(models.Model):
 
     def __unicode__(self):
         return self.name
+    
 class ElementCollection(models.Model):
     name = models.CharField(max_length=400)
     slug = models.SlugField(max_length=400, unique=True)
