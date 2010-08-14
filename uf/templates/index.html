@@ -84,7 +84,7 @@ z-index:
 right:
 0px;
 top:
-50px;
+78px;
 width:
 140 px;
 height:
@@ -103,17 +103,17 @@ absolute;
         <div id="header">
                 <div id="header-decoration"></div>
                         <div id="header-image">img</div>
-                                <div id="header-text"><span id="collection-name">
-                                        Castel Maggiore</span></div>
-                                        <div id="header-menu">stuff</div>
+                                <div id="header-text">UrbanFabric<span id="collection-name">
+                                        </span></div>
+                                        <div id="header-menu"><span id="where-am-i" title="where am i?">w</span></div>
                                                 </div>
                                                 <div id="left-container"></div>
                                                         <div id="searchbox"></div>
 
                                                                 <script>
 resize = function () {
-    $('#map').width($(window).width());
-    $('#map').height($(window).height());
+    $('#ufmap').width($(window).width());
+    $('#ufmap').height($(window).height());
 }
 
 change_hash = function(hash){
@@ -126,7 +126,8 @@ if (jQuery.old_collection != collection){
 	jQuery.old_collection = collection;
 	$.getJSON('/collection/'+collection, function(data){
 	console.debug(data);
-		$('#collection-name').text(data.main.name);
+		$('#collection-name').text(": " + data.main.name);
+		
 	});
 	}
 if (count >1)
@@ -141,8 +142,8 @@ localize = function(position) {
 }
 $(function() {
 	change_hash(window.location.hash.split('#')[1]);
-    $('#ufmap').width($(window).width());
-    $('#ufmap').height($(window).height());
+	resize();
+	$(window).resize(resize);
     var browserSupportFlag =  new Boolean();
 	var mapstyle = [
   {
@@ -150,20 +151,20 @@ $(function() {
     elementType: "all",
     stylers: [
       { saturation: 98 },
-      { hue: "#ff8c00" }
+      { hue: "#000080" }
     ]
   },{
     featureType: "road",
     elementType: "all",
     stylers: [
-      { hue: "#ff8c00" }
+      { hue: "#000080" }
     ]
   },{
     featureType: "landscape.man_made",
     elementType: "all",
     stylers: [
       { saturation: 99 },
-      { hue: "#ff8c00" },
+      { hue: "#000080" },
       { lightness: 1 },
       { visibility: "simplified" }
     ]
@@ -206,16 +207,15 @@ position:
         },
     };
     jQuery.ufmap = new google.maps.Map(document.getElementById("ufmap"), myOptions);
-	  var styledMapOptions = {
-      name: "Hip-Hop"
-  }
+	var styledMapOptions = {
+		name: "UF"
+	}
 
-  var jayzMapType = new google.maps.StyledMapType(
-      mapstyle, styledMapOptions);
+	var jayzMapType = new google.maps.StyledMapType(mapstyle, styledMapOptions);
 
-  jQuery.ufmap.mapTypes.set('hiphop', jayzMapType);
-  jQuery.ufmap.setMapTypeId('hiphop');
-    if (navigator.geolocation) {
+	jQuery.ufmap.mapTypes.set('UF', jayzMapType);
+	jQuery.ufmap.setMapTypeId('UF');
+	if (navigator.geolocation) {
         jQuery.watcher = navigator.geolocation.watchPosition(localize, handleNoGeolocation);
 
         // Browser doesn't support Geolocation

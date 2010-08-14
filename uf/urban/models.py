@@ -122,6 +122,43 @@ class ElementCollection(models.Model):
     def __unicode__(self):
         return self.name
 
+    def mapstyle(self):
+        return '\
+    [\
+  {\
+    featureType: "road",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#%s" }\
+    ]\
+  },{\
+    featureType: "transit",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#%s" }\
+    ]\
+  },{\
+    featureType: "landscape.man_made",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#%s" }\
+    ]\
+  },{\
+    featureType: "administrative",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#%s" }   \
+    ]\
+  },{\
+    featureType: "poi.business",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#0088ff" },\
+      { saturation: 16 }\
+    ]\
+  }\
+]' % (self.color_code_back, self.color_code_back, self.color_code_back, self.color_code_back)
+
 class GeoElementCollection(PolygonResource, ElementCollection):
     wiki = models.SlugField(max_length = 250)
     objects = gismodels.GeoManager()
