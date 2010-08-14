@@ -3,25 +3,16 @@ from django.db import models
 from django.contrib.gis.db import models as gismodels
 from django.contrib.gis.gdal import *
 from django.contrib.gis.geos import *
-
+from django.utils.translation import ugettext as _
 from django.template.defaultfilters import slugify
 
 #geographic
 class GeoResource(models.Model):
     wkt = models.TextField(blank=True, null=True)
-    
     def __unicode__(self):
         return self.wkt
-
-    @classmethod
-    def from_wkt(self, wkt, ctype, oid):
-        gel = WKTReader().read(wkt)
-        gt = style[str(gel.geom_type)]
-        gg = gt()
-        gg.content_type = ctype
-        gg.object_id = oid
-        gg.geolocation = gel
-        gg.save()
+    class Meta:
+        abstract = True
 
 class PointResource(GeoResource):
     geolocation = gismodels.PointField(srid=4326)
