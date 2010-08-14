@@ -8,12 +8,12 @@ urlpatterns = patterns('',
     (r'^forms/login/user$', 'urban.views.forms.login_user'),
     (r'^forms/delete/user/(?P<username>\w*)$', 'urban.views.forms.del_user'),
 
-    (r'^forms/add/venue$', 'urban.views.forms.add_user'),
-    (r'^forms/add/group$', 'urban.views.forms.add_user'),
+    (r'^forms/add/venue$', 'urban.views.forms.add_venue'),
+    (r'^forms/add/group$', 'urban.views.forms.add_group'),
 
-    (r'^forms/edit/venue/(?P<id>\d+)$', 'urban.views.forms.del_user'),
+    (r'^forms/edit/venue/(?P<id>\d+)$', 'urban.views.forms.edit_venue'),
     
-    (r'^forms/delete/venue/(?P<id>\d+)$', 'urban.views.forms.del_user'),
+    (r'^forms/delete/venue/(?P<id>\d+)$', 'urban.views.forms.edit_group'),
 
     (r'^$', 'urban.views.index'),
     (r'^show/tags/$', 'urban.views.collections.all_tags'),
