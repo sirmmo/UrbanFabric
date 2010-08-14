@@ -1,13 +1,15 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.gis.db import models as gismodels
+from django.contrib.gis.gdal import *
+from django.contrib.gis.geos import *
 
 #geographic
 
 class GeoResource(models.Model):
     wkt = models.TextField(blank=True, null=True)
     def __unicode__(self):
-        return self.subject.__unicode__()
+        return self.wkt
 
     @classmethod
     def from_wkt(self, wkt, ctype, oid):
@@ -50,9 +52,17 @@ class PolygonResource(GeoResource):
 #interest area
 
 class InterestArea(models.Model):
-    element = models.ForeignKey(Element, related_name="interest_area")
+    wkt = models.TextField(blank = True, null=True)
+    geolocation = gismodels.PointField(srid=900913, blank = True, null=True)
+    element = models.ForeignKey('Venue', related_name="interest_area")
     radius = models.PositiveIntegerField()
+    def save(self):
+        self.geolocation = self.element.geolocation
+        self.wkt = OGRGeometry(str(self.geolocation)).wkt
+        super(InterestArea, self).save() # Call the "real" save() method
 
+    def __unicode__(self):
+        return self.element.name + ": radius = " + str(self.radius)
 #classifications
 class Classification(models.Model):
     name=models.CharField(max_length=200)
@@ -60,16 +70,20 @@ class Classification(models.Model):
     parent = models.ForeignKey('Classification', blank = True, null=True, default = None)
     suggested_products = models.ManyToManyField('Production', related_name="sold_by")
 
+    def __unicode__(self):
+        return self.name
 #production
 class Production(models.Model):
     name=models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
     parent = models.ForeignKey('Production', blank = True, null=True, default = None)
 
+    def __unicode__(self):
+        return self.name
 
 #elements
 
-class Element(PointResource):
+class Venue(PointResource):
     name = models.CharField(max_length=400)
     slug = models.SlugField(max_length=400, unique=True)
     description = models.TextField()
@@ -77,21 +91,27 @@ class Element(PointResource):
     classification = models.ManyToManyField(Classification)
     products = models.ManyToManyField(Production, related_name="sold")
 
+    def __unicode__(self):
+        return self.name
     def save(self):
 
-        super(Element, self).save() # Call the "real" save() method
+        super(Venue, self).save() # Call the "real" save() method
 
 class CollectionClassification(models.Model):
     name=models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
-    
+
+    def __unicode__(self):
+        return self.name
 class ElementCollection(models.Model):
     name = models.CharField(max_length=400)
     slug = models.SlugField(max_length=400, unique=True)
-    elements = models.ManyToManyField(Element, related_name = "collections")
+    elements = models.ManyToManyField(Venue, related_name = "collections")
     manager = models.ForeignKey(User, related_name="manages_groups")
     classification = models.ManyToManyField(CollectionClassification)
 
+    def __unicode__(self):
+        return self.name
 
 class GeoElementCollection(PolygonResource, ElementCollection):
     wiki = models.SlugField(max_length = 250)
