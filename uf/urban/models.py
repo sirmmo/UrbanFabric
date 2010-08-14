@@ -4,6 +4,7 @@ from django.contrib.gis.db import models as gismodels
 from django.contrib.gis.gdal import *
 from django.contrib.gis.geos import *
 
+from django.template.defaultfilters import slugify
 #geographic
 
 class GeoResource(models.Model):
@@ -68,7 +69,7 @@ class InterestArea(models.Model):
 class Classification(models.Model):
     icon = models.ImageField(upload_to = "img/class/")
     name=models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
     parent = models.ForeignKey('Classification', blank = True, null=True, default = None)
     suggested_products = models.ManyToManyField('Production', related_name="sold_by")
 
@@ -76,6 +77,10 @@ class Classification(models.Model):
     public_service = models.BooleanField(default = False)
     abstract = models.BooleanField(default = False)
 
+    def save(self):
+        self.slug = slugify(self.name)
+        super( Classification, self ).save()
+        
     def __unicode__(self):
         return self.name
 #production
@@ -87,7 +92,9 @@ class Production(models.Model):
 
     def __unicode__(self):
         return self.name
-
+    def save(self):
+        self.slug = slugify(self.name)
+        super( Production, self ).save()
 #elements
 
 class Venue(PointResource):
@@ -102,6 +109,7 @@ class Venue(PointResource):
         return self.name
     def save(self):
 
+        self.slug = slugify(self.name)
         super(Venue, self).save() # Call the "real" save() method
 
 class CollectionClassification(models.Model):
@@ -122,42 +130,14 @@ class ElementCollection(models.Model):
     def __unicode__(self):
         return self.name
 
-    def mapstyle(self):
-        return '\
-    [\
-  {\
-    featureType: "road",\
-    elementType: "all",\
-    stylers: [\
-      { hue: "#%s" }\
-    ]\
-  },{\
-    featureType: "transit",\
-    elementType: "all",\
-    stylers: [\
-      { hue: "#%s" }\
-    ]\
-  },{\
-    featureType: "landscape.man_made",\
-    elementType: "all",\
-    stylers: [\
-      { hue: "#%s" }\
-    ]\
-  },{\
-    featureType: "administrative",\
-    elementType: "all",\
-    stylers: [\
-      { hue: "#%s" }   \
-    ]\
-  },{\
-    featureType: "poi.business",\
-    elementType: "all",\
-    stylers: [\
-      { hue: "#0088ff" },\
-      { saturation: 16 }\
-    ]\
-  }\
-]' % (self.color_code_back, self.color_code_back, self.color_code_back, self.color_code_back)
+    def save(self):
+
+        self.slug = slugify(self.name)
+        super(ElementCollection, self).save() # Call the "real" save() method
+
+    
+
+    
 
 class GeoElementCollection(PolygonResource, ElementCollection):
     wiki = models.SlugField(max_length = 250)

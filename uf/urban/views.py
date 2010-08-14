@@ -7,11 +7,9 @@ from django.core import serializers
 def serializable(object):
     o = {}
     for k in object.__dict__:
-        print str(k)
         if not str(k).startswith('_'):
             val = getattr(object, k, None)
             if  str(val.__class__.__name__) not in ['int', 'unicode', 'bool']:
-                print "\n_serial_\n"
                 val = serializable(val)
             o[k] = val
     return o
@@ -45,6 +43,46 @@ def by_collection(request, collection_name):
     filtered['elements'] = els
     filtered = simplejson.dumps(filtered)
     return HttpResponse(filtered, mimetype="application/json")
+
+def mapstyle(request, collection_name):
+    r = ""
+    t = ElementCollection.objects.get(slug=collection_name)
+    r =  '\
+    [\
+  {\
+    featureType: "road",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#%s" }\
+    ]\
+  },{\
+    featureType: "transit",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#%s" }\
+    ]\
+  },{\
+    featureType: "landscape.man_made",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#%s" }\
+    ]\
+  },{\
+    featureType: "administrative",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#%s" }   \
+    ]\
+  },{\
+    featureType: "poi.business",\
+    elementType: "all",\
+    stylers: [\
+      { hue: "#0088ff" },\
+      { saturation: 16 }\
+    ]\
+  }\
+]' % (self.color_code_back, self.color_code_back, self.color_code_back, self.color_code_back)
+    return HttpResponse(r, mimetype="application/json" )
 
 def by_point(request, point):
     t = Production.objects.get(name=point)
