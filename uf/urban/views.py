@@ -7,7 +7,7 @@ from django.core import serializers
 
 
 def index(request):
-    pass
+    return render_to_response('index.html',{})
 
 def by_tag(request, tag_name):
     t = Production.objects.get(slug=tag_name)
