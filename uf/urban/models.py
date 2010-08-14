@@ -54,26 +54,38 @@ class InterestArea(PointResource):
 #classifications
 class Classification(models.Model):
     name=models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
     parent = models.ForeignKey('Classification', blank = True, null=True, default = None)
-    suggested_products = models.ManyToManyField('Production', related_name="produced_by")
+    suggested_products = models.ManyToManyField('Production', related_name="sold_by")
 
 #production
 class Production(models.Model):
     name=models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
     parent = models.ForeignKey('Production', blank = True, null=True, default = None)
 
 
 #elements
 
 class Element(PointResource):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=400)
+    slug = models.SlugField(max_length=400, unique=True)
     description = models.TextField()
     manager = models.ForeignKey(User, related_name="manages")
     intest_area = models.ForeignKey(InterestArea)
-    
+    classification = models.ManyToManyField(Classification)
+    products = models.ManyToManyField(Production)
 
+
+class CollectionClassification(models.Model):
+    name=models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    
 class ElementCollection(models.Model):
+    name = models.CharField(max_length=400)
+    slug = models.SlugField(max_length=400, unique=True)
     elements = models.ManyToManyField(Element, related_name = "collections")
     manager = models.ForeignKey(User, related_name="manages")
+    classification = Models.ManyToManyField(CollectionClassification)
 
 
