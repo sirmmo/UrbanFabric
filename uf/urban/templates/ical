@@ -1,0 +1,24 @@
+BEGIN:VCALENDAR
+PRODID:-//UrbanFabric//iCal 4.0.3//EN
+X-WR-TIMEZONE:America/New_York
+X-WR-CALDESC:The free Green Bay Packers 2010-11 NFL Schedule\, version 1
+ .0\, by Oregon's Omug (not associated with the Green Bay Packers -- duh!
+ ). Look for updated versions of this calendar schedule as the regular se
+ ason opening game approaches. Trivia questions and fun facts sprinkled a
+ bout this calendar -- enjoy your cheese!
+VERSION:2.0
+{%for interval in venue.openings%}
+BEGIN:VEVENT
+UID:UF-interval-{{interval.id}}
+DTSTAMP:{{interval.dtstamp}}20100623T025605Z
+DESCRIPTION{{interval.open}}
+LOCATION:{{venue.address}}
+CREATED:20100623T025347Z
+TRANSP:TRANSPARENT
+SUMMARY:{{open}}
+SEQUENCE:8
+DTEND;VALUE=DATE:{{interval.date_time_end}}
+DTSTART;VALUE=DATE:{{interval.date_time_start}}
+END:VEVENT
+{% endfor %}
+END:VCALENDAR
