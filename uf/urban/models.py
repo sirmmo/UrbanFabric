@@ -49,7 +49,8 @@ class PolygonResource(GeoResource):
 
 #interest area
 
-class InterestArea(PointResource):
+class InterestArea(models.Model):
+    element = models.ForeignKey(Element, related_name="interest_area")
     radius = models.PositiveIntegerField()
 
 #classifications
@@ -73,7 +74,6 @@ class Element(PointResource):
     slug = models.SlugField(max_length=400, unique=True)
     description = models.TextField()
     manager = models.ForeignKey(User, related_name="manages_venues")
-    intest_area = models.ForeignKey(InterestArea)
     classification = models.ManyToManyField(Classification)
     products = models.ManyToManyField(Production, related_name="sold")
 
