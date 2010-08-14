@@ -96,7 +96,7 @@ class Venue(PointResource):
     manager = models.ForeignKey(User, related_name="manages_venues")
     classification = models.ManyToManyField(Classification, related_name="classifies")
     products = models.ManyToManyField(Production, related_name="sold")
-
+    
     def __unicode__(self):
         return self.name
     def save(self):
