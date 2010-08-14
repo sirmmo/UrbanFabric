@@ -4,6 +4,10 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
    
     (r'^$', 'urban.views.index'),
+    (r'^show/tags/$', 'urban.views.all_tags'),
+    (r'^show/prods/$', 'urban.views.all_prods'),
+    (r'^show/collections/$', 'urban.views.all_colls'),
+
     (r'^tag/(?P<tag_name>\w*)/$', 'urban.views.by_tag'),
     (r'^prod/(?P<classification_name>\w*)/$', 'urban.views.by_classification'),
     (r'^cf/(?P<id>\d+)$', 'urban.views.to_collection_id'),

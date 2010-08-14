@@ -115,10 +115,15 @@ class Venue(PointResource):
 class CollectionClassification(models.Model):
     name=models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
-
+    private = models.BooleanField(default = True)
+    
     def __unicode__(self):
         return self.name
-    
+     def save(self):
+
+        self.slug = slugify(self.name)
+        super(CollectionClassification, self).save() # Call the "real" save() method
+        
 class ElementCollection(models.Model):
     name = models.CharField(max_length=400)
     slug = models.SlugField(max_length=400, unique=True)
@@ -168,3 +173,8 @@ class Message(models.Model):
     year_end = models.PositiveIntegerField()
 
     text = models.CharField(max_length=400)
+
+
+class TrustedServer(models.Model):
+    ping_url = models.UrlField(max_length = 1024, verify_exists = True);
+    accepted = models.BooleanField(default = False)

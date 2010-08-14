@@ -102,9 +102,17 @@ def to_collection_id(request, id):
     return HttpRedirect('')
 
 def xuf_add(request):
+    addr = request.REQUEST.get('remote_url', "")
+    if addr != "":
+        s = TrustedServer ()
+        s.ping_url = addr
+        s.save()
+
+        #send XUF trust request
     pass
 
 def xuf_ping(request):
+    #receive XUF ping
     pass
 
 
