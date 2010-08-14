@@ -1,0 +1,27 @@
+[
+  {
+    featureType: "road",
+    elementType: "all",
+    stylers: [
+      { hue: "#{{color}}" }
+    ]
+  },{
+    featureType: "transit",
+    elementType: "all",
+    stylers: [
+      { hue: "#{{color}}" }
+    ]
+  },{
+    featureType: "landscape.man_made",
+    elementType: "all",
+    stylers: [
+      { hue: "#{{color}}" }
+    ]
+  },{
+    featureType: "poi.business",
+    elementType: "all",
+    stylers: [
+      { visibility: "off" }
+    ]
+  }
+]
