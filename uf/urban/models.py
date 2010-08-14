@@ -8,6 +8,7 @@ from django.contrib.gis.geos import *
 
 class GeoResource(models.Model):
     wkt = models.TextField(blank=True, null=True)
+    
     def __unicode__(self):
         return self.wkt
 
@@ -23,16 +24,16 @@ class GeoResource(models.Model):
 
 
 class PointResource(GeoResource):
-    geolocation = gismodels.PointField(srid=900913)
+    geolocation = gismodels.PointField(srid=4326)
     objects = gismodels.GeoManager()
-   
+
     def save(self):
         self.wkt = OGRGeometry(str(self.geolocation)).wkt
       
         super(PointResource, self).save() # Call the "real" save() method
 
 class LineResource(GeoResource):
-    geolocation = gismodels.LineStringField(srid=900913)
+    geolocation = gismodels.LineStringField(srid=4326)
     objects = gismodels.GeoManager()
   
     def save(self):
@@ -41,7 +42,7 @@ class LineResource(GeoResource):
         super(LineResource, self).save() # Call the "real" save() method
 
 class PolygonResource(GeoResource):
-    geolocation = gismodels.PolygonField(srid=900913)
+    geolocation = gismodels.MultiPolygonField(srid=4326)
     objects = gismodels.GeoManager()
  
     def save(self):
@@ -53,7 +54,7 @@ class PolygonResource(GeoResource):
 
 class InterestArea(models.Model):
     wkt = models.TextField(blank = True, null=True)
-    geolocation = gismodels.PointField(srid=900913, blank = True, null=True)
+    geolocation = gismodels.PointField(srid=4326, blank = True, null=True)
     element = models.ForeignKey('Venue', related_name="interest_area")
     radius = models.PositiveIntegerField()
     def save(self):
@@ -116,7 +117,8 @@ class ElementCollection(models.Model):
     elements = models.ManyToManyField(Venue, related_name = "collections")
     manager = models.ForeignKey(User, related_name="manages_groups")
     classification = models.ManyToManyField(CollectionClassification)
-
+    color_code_back = models.CharField(max_length = 10, default="ff8c00")
+    color_code_front = models.CharField(max_length = 10, default="000000")
     def __unicode__(self):
         return self.name
 

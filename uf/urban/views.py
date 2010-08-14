@@ -4,7 +4,17 @@ from django.utils import simplejson
 from urban.models import *
 from django.core import serializers
 
-
+def serializable(object):
+    o = {}
+    for k in object.__dict__:
+        print str(k)
+        if not str(k).startswith('_'):
+            val = getattr(object, k, None)
+            if  str(val.__class__.__name__) not in ['int', 'unicode', 'bool']:
+                print "\n_serial_\n"
+                val = serializable(val)
+            o[k] = val
+    return o
 
 def index(request):
     return render_to_response('index.html',{})
@@ -26,10 +36,14 @@ def by_classification(request, classification_name):
 
 def by_collection(request, collection_name): 
     t = ElementCollection.objects.get(slug=collection_name)
-    filtered = [] #bbox, page, etc...
-    for s in t.sold.all():
-        filtered.append(s)
-    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products','parent',)},'products':{'excludes':('parent',)}},indent=4)
+    filtered = {} #bbox, page, etc...
+    filtered['main'] = serializable(t)
+    filtered['elements'] = []
+    els = []
+    for s in t.elements.all():
+        els.append(serializable(s))
+    filtered['elements'] = els
+    filtered = simplejson.dumps(filtered)
     return HttpResponse(filtered, mimetype="application/json")
 
 def by_point(request, point):
