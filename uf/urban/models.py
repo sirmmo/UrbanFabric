@@ -88,7 +88,7 @@ class Venue(PointResource):
     slug = models.SlugField(max_length=400, unique=True)
     description = models.TextField()
     manager = models.ForeignKey(User, related_name="manages_venues")
-    classification = models.ManyToManyField(Classification)
+    classification = models.ManyToManyField(Classification, related_name="classifies")
     products = models.ManyToManyField(Production, related_name="sold")
 
     def __unicode__(self):
