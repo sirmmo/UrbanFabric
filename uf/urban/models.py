@@ -97,13 +97,21 @@ class Venue(PointResource):
     products = models.ManyToManyField(Production, related_name="sold")
 
     opening = models.ManyToManyField('Interval')
-
+    links = models.ManyToManyField('Link')
     def __unicode__(self):
         return self.name
     def save(self):
 
         self.slug = slugify(self.name)
         super(Venue, self).save() # Call the "real" save() method
+
+class Link(models.Model):
+    url = models.URLField(verify_exists=True)
+    type = models.ForeignKey('LinkFamily')
+
+class LinkFamily(models.Model):
+    name=models.CharField(max_length = 150)
+    icon = models.ImageField(upload_to = "img/links/")
 
 class CollectionClassification(models.Model):
     name=models.CharField(max_length=200)
