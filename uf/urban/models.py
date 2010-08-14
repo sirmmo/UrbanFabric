@@ -65,15 +65,21 @@ class InterestArea(models.Model):
         return self.element.name + ": radius = " + str(self.radius)
 #classifications
 class Classification(models.Model):
+    icon = models.ImageField(upload_to = "img/class/")
     name=models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
     parent = models.ForeignKey('Classification', blank = True, null=True, default = None)
     suggested_products = models.ManyToManyField('Production', related_name="sold_by")
 
+    commercial = models.BooleanField(default=True)
+    public_service = models.BooleanField(default = False)
+    abstract = models.BooleanField(default = False)
+
     def __unicode__(self):
         return self.name
 #production
 class Production(models.Model):
+    icon = models.ImageField(upload_to = "img/prod/")
     name=models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
     parent = models.ForeignKey('Production', blank = True, null=True, default = None)
@@ -122,3 +128,24 @@ class GeoElementCollection(PolygonResource, ElementCollection):
 
         super(GeoElementCollection, self).save() # Call the "real" save() method
 
+
+#horrible... to make better asap
+class Message(models.Model):
+    daily = models.BooleanField(default=False)
+    weekly = models.BooleanField(default=False)
+    monthly = models.BooleanField(default=False)
+    yearly = models.BooleanField(default=False)
+
+    time_start = models.PositiveSmallIntegerField()
+    time_end = models.PositiveSmallIntegerField()
+
+    day_start = models.PositiveSmallIntegerField()
+    day_end = models.PositiveSmallIntegerField()
+
+    month_start = models.PositiveSmallIntegerField()
+    month_end = models.PositiveSmallIntegerField()
+
+    year_start = models.PositiveIntegerField()
+    year_end = models.PositiveIntegerField()
+
+    text = models.CharField(max_length=400)
