@@ -1,0 +1,10 @@
+<form action="{{action}}" method="post">
+    {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }}: {{ field }}
+
+        </div>
+    {% endfor %}{% csrf_token %}
+    <p><input type="submit" value="Send message" /></p>
+</form>
