@@ -7,9 +7,6 @@ from django.views.decorators.csrf import csrf_protect
 from urban.forms import *
 from urban.models import *
 
-
-
-
 def serializable(object):
     o = {}
     for k in object.__dict__:
