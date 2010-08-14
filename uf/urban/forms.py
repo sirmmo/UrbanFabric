@@ -1,6 +1,7 @@
 from django.forms.models import modelformset_factory
 from django import forms
 from urban.models import *
+from django.forms import ModelForm
 
 IntervalFormSet = modelformset_factory(Interval)
 
@@ -12,6 +13,10 @@ class SignUpForm(forms.Form):
     password1 = forms.CharField(widget = forms.PasswordInput)
     password2 = forms.CharField(widget= forms.PasswordInput)
 
-class LoginForm(forms.Form):
+class LogInForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget = forms.PasswordInput)
+
+class VenueForm(ModelForm):
+    class Meta:
+        model = Venue
