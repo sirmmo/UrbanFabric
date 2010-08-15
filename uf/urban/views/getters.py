@@ -55,9 +55,10 @@ def by_point(request, point):
     return HttpResponse(filtered, mimetype="application/json")
 
 
-def by_collection_id(request, collection, id):
+def by_collection_id(request, collection_name, id):
     t = Venue.objects.get(id=id)
-    t = serializers.serialize("json", t, relations={'classification':{'excludes':('suggested_products', 'parent', )}, 'products':{'excludes':('parent', )}}, indent=4)
+    t = simplejson.dumps(serializable(t))
+    #serializers.serialize("json", t, relations={'classification':{'excludes':('suggested_products', 'parent', )}, 'products':{'excludes':('parent', )}}, indent=4)
     return HttpResponse(t, mimetype="application/json")
 
 def to_collection_id(request, id):
