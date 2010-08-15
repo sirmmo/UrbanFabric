@@ -10,7 +10,7 @@ from django.utils import simplejson
 from django.views.decorators.csrf import csrf_protect
 from urban.forms import *
 from urban.models import *
-from django.settings import DEBUG
+from settings import DEBUG
 
 def serializable(object, level=0, parent=None, ancestor=None):
     o = {}
