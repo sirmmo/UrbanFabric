@@ -8,11 +8,16 @@ from django.views.decorators.csrf import csrf_protect
 from django.template import RequestContext
 
 
+def show_all(request):
+    pass
 
 def all_tags(request):
-    pass
+    c = Classification.objects.all()
+    return HttpResponse(serializers.serialize('json', c), mimetype="application/json")
 def all_prods(request):
-    pass
+    c = Production.objects.all()
+    return HttpResponse(serializers.serialize('json', c), mimetype="application/json")
 def all_colls(request):
-    pass
+    c = ElementCollection.objects.all()
+    return HttpResponse(serializers.serialize('json', c), mimetype="application/json")
 
