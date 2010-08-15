@@ -1,3 +1,4 @@
+from uf.urban.models import InterestArea
 import json
 
 from django.core import serializers
@@ -8,9 +9,9 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.views.decorators.csrf import csrf_protect
+from settings import DEBUG
 from urban.forms import *
 from urban.models import *
-from settings import DEBUG
 
 def serializable(object, level=0, parent=None, ancestor=None):
     o = {}
@@ -41,7 +42,7 @@ def by_classification(request, classification_name):
     filtered = [] #bbox, page, etc...
     for s in t.classifies.all():
         filtered.append(s)
-    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products', 'parent', )}, 'products':{'excludes':('parent', )}}, indent=4)
+    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products', 'parent',)}, 'products':{'excludes':('parent',)}}, indent=4)
     return HttpResponse(filtered, mimetype="application/json")
 
 def on_collection(request, collection_name):
@@ -54,7 +55,7 @@ def collection_contents(request, collection_name):
     def polish(stuff):
         del stuff['geolocation']
         del stuff['wkt']
-        stuff['url'] = "#%s/%s" %( collection_name, stuff['id'])
+        stuff['url'] = "#%s/%s" % (collection_name, stuff['id'])
         return stuff
     a = map(polish, a)
     return HttpResponse(simplejson.dumps(a), mimetype="application/json")
@@ -71,7 +72,7 @@ def by_point(request, point):
     filtered = [] #bbox, page, etc...
     for s in t.sold.all():
         filtered.append(s.__dict__)
-    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products', 'parent', )}, 'products':{'excludes':('parent', )}}, indent=4)
+    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products', 'parent',)}, 'products':{'excludes':('parent',)}}, indent=4)
     return HttpResponse(filtered, mimetype="application/json")
 
 
@@ -84,10 +85,19 @@ def by_collection_id(request, collection_name, id):
 def to_collection_id(request, id):
     return HttpRedirect('')
 
+from django.contrib.gis.measure import D
+from django.contrib.gis.geos import *
+from django.db.models import F
 
 def messages_by_point(request):
-    pass
-
+    point = request.REQUEST.get('point', None)
+    point = point
+    time = request.REQUEST.get('time', None)
+    if not (point == None or time == None):
+        ias = InterestArea.objects.filter(geolocation__distance_lte=(point, D(m=F('radius'))))
+        ms = Message.objects.filter(area__in = ias)
+        
+    
 
 def ical_by_id(request):
     pass
