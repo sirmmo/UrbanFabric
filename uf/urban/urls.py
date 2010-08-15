@@ -23,16 +23,16 @@ urlpatterns = patterns('',
     (r'^show/collections/$', 'urban.views.collections.all_colls'),
 
     #getters
-    (r'^tag/(?P<tag_name>\w*)/$', 'urban.views.getters.by_tag'),
-    (r'^prod/(?P<classification_name>\w*)/$', 'urban.views.getters.by_classification'),
+    (r'^tag/(?P<tag_name>\[-w]*)/$', 'urban.views.getters.by_tag'),
+    (r'^prod/(?P<classification_name>\[-\w]*)/$', 'urban.views.getters.by_classification'),
     (r'^cf/(?P<id>\d+)$', 'urban.views.getters.to_collection_id'),
-    (r'^collection/(?P<collection_name>\w*)/$', 'urban.views.getters.on_collection'),
-    (r'^collection/(?P<collection_name>\w*)/contents$', 'urban.views.getters.collection_contents'),
-    (r'^collection/(?P<collection_name>\w*)/mapstyle$', 'urban.views.getters.collection_mapstyle'),
+    (r'^collection/(?P<collection_name>[-\w]*)/$', 'urban.views.getters.on_collection'),
+    (r'^collection/(?P<collection_name>[-\w]*)/contents$', 'urban.views.getters.collection_contents'),
+    (r'^collection/(?P<collection_name>[-\w]*)/mapstyle$', 'urban.views.getters.collection_mapstyle'),
 
     #venues
-    (r'^c/(?P<collection_name>\w*)/(?P<id>\d+)$', 'urban.views.getters.by_collection_id'),
-    (r'^c/(?P<collection_name>\w*)/(?P<id>\d+)/ical$', 'urban.views.getters.ical_by_id'),
+    (r'^c/(?P<collection_name>\[-\w]*)/(?P<id>\d+)$', 'urban.views.getters.by_collection_id'),
+    (r'^c/(?P<collection_name>\[-\w]*)/(?P<id>\d+)/ical$', 'urban.views.getters.ical_by_id'),
 
     #locators
     (r'^p/(?P<point>\.*)$', 'urban.views.getters.by_point'),
@@ -40,7 +40,7 @@ urlpatterns = patterns('',
     #messages
     (r'^messages/$', 'urban.views.getters.messages_by_point'),
 
-    #xuf
+   
     (r'^xuf/addurl/$', 'urban.views.xuf.add'),
     (r'^xuf/ping/$', 'urban.views.xuf.ping'),
 )

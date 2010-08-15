@@ -54,7 +54,7 @@ def collection_contents(request, collection_name):
     def polish(stuff):
         del stuff['geolocation']
         del stuff['wkt']
-        stuff['url'] = reverse('urban.views.getters.by_collection_id', kwargs={'collection_name':collection_name, 'id': stuff['id']})
+        stuff['url'] = "#%s/%s" %( collection_name, stuff['id'])
         return stuff
     a = map(polish, a)
     return HttpResponse(simplejson.dumps(a), mimetype="application/json")
