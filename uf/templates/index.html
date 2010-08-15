@@ -292,6 +292,42 @@ localize = function(position) {
 }
 
 jQuery.logo_default = '/static/imgs/UF_flat.png';
+
+render = function(type, element){
+	switch (type){
+		
+		/*
+		
+		
+		{
+			"pk": 1, 
+			"model": "urban.classification", 
+			"fields": {
+				"suggested_products": [2], 
+				"public_service": false, 
+				"parent": null, 
+				"abstract": false, 
+				"commercial": true, 
+				"icon": "img/class/icon.png", 
+				"slug": "pub", 
+				"name": "Pub"
+			}
+		}
+		
+		*/
+		case "tag":{}
+		case "collection":{}
+		
+		/*
+			{"pk": 1, "model": "urban.production", "fields": {"slug": "drinks", "name": "Drinks", "parent": null, "icon": "img/prods/foursquare.jpg"}}, {"pk": 2, "model": "urban.production", "fields": {"slug": "beer", "name": "Beer", "parent": 1, "icon": "img/prods/yelp-icon.png"}}
+		*/
+		
+		case "prod":{}
+		default: {}
+	}
+}
+
+
 $(function() {
 	
 	
@@ -336,14 +372,31 @@ $(function() {
 	});
 	
 	
-	$.getJSON('/show/tags/', function(data){});
-	$.getJSON('/show/collections/', function(data){});
-	$.getJSON('/show/prods/', function(data){});
+	$.getJSON('/show/tags/', function(data){
+		for (el in data){
+			it = data[el];
+			render('tag', it);
+		}
+	});
+	$.getJSON('/show/collections/', function(data){
+		for (el in data){
+			it = data[el];
+			render('collection', it);
+		}
+	});
+	$.getJSON('/show/prods/', function(data){
+		for (el in data){
+			it = data[el];
+			render('prod', it);
+		}
+	});
+	
+	$.getJSON('/area/');
 	
 	$('form').live('submit', function(){
 		$(this).ajaxSubmit({
 			success:function(){
-				$(this).dialog('close');
+				$('#popup').dialog('close');
 				$.cookie('li', "1");
 			}
 		});
