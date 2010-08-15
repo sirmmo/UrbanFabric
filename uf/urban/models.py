@@ -110,9 +110,13 @@ class Venue(PointResource):
     def __unicode__(self):
         return self.name
     def save(self):
-
         self.slug = slugify(self.name)
         super(Venue, self).save() # Call the "real" save() method
+        if self.id:
+            d = InterestArea.objects.filter(element__id = self.id)
+            if len(d)== 1:
+                d = d[0]
+                d.save()
 
 class Link(models.Model):
     url = models.URLField(verify_exists=True)

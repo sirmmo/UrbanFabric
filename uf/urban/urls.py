@@ -30,6 +30,8 @@ urlpatterns = patterns('',
     (r'^collection/(?P<collection_name>[-\w]*)/contents$', 'urban.views.getters.collection_contents'),
     (r'^collection/(?P<collection_name>[-\w]*)/mapstyle$', 'urban.views.getters.collection_mapstyle'),
 
+    (r'^area/$', 'urban.views.getters.area'),
+
     #venues
     (r'^c/(?P<collection_name>\[-\w]*)/(?P<id>\d+)$', 'urban.views.getters.by_collection_id'),
     (r'^c/(?P<collection_name>\[-\w]*)/(?P<id>\d+)/ical$', 'urban.views.getters.ical_by_id'),
@@ -38,7 +40,7 @@ urlpatterns = patterns('',
     (r'^p/(?P<point>\.*)$', 'urban.views.getters.by_point'),
 
     #messages
-    (r'^messages/$', 'urban.views.getters.messages_by_point'),
+    (r'^messages$', 'urban.views.getters.messages_by_point'),
 
     #filter
     (r'^filter/(?P<mode>\w{2})/(?P<filter>.*)$', 'urban.views.filter'),

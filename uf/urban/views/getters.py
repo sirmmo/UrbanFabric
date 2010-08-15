@@ -1,3 +1,4 @@
+from cmath import sqrt
 from uf.urban.models import InterestArea
 import json
 
@@ -87,21 +88,52 @@ def to_collection_id(request, id):
 
 from django.contrib.gis.measure import D
 from django.contrib.gis.geos import *
+from django.contrib.gis.gdal import *
 from django.db.models import F
-
+import math
 def messages_by_point(request):
     point = request.REQUEST.get('point', None)
-    point = point
-    time = request.REQUEST.get('time', None)
-    if not (point == None or time == None):
-        ias = InterestArea.objects.filter(geolocation__distance_lte=(point, D(m=F('radius'))))
-        ms = Message.objects.filter(area__in = ias)
+    if not point == None:
         
-    
+        point = simplejson.loads(point)
+        point = Point(point['c'], point['b'])
+        time = request.REQUEST.get('time', None)
+        if not (point == None or time == None):
+            ias = InterestArea.objects.all().values('wkt', 'element_id','radius', 'id',)
+            
+
+            def proc(el):
+#                print point.x
+#                print point.y
+                p2 = fromstr(el['wkt'])
+#                print p2.x
+#                print p2.y
+                dist = sqrt((point.y-p2.y)**2+((point.x-p2.x)*math.cos(point.y*2*math.pi/360))**2) *111000
+                dist = dist.real
+#                print dist
+                if dist < el['radius']:
+                    el['geo'] = fromstr(el['wkt'])
+                    return el
+            ias = map(proc, ias)
+#            print ias
+            ms = Message.objects.filter(area__id__in = [i['id'] for i in ias]).values('text', 'area__element__name')
+            def resp(el):
+                el['name'] = str(el['area__element__name'])
+                del el['area__element__name']
+                el['text'] = str(el['text'])
+                return el
+            ms = map(resp, ms)
+
+            return HttpResponse(ms)
+    return HttpResponse()
+
 
 def ical_by_id(request):
     pass
 
+
+def area(request):
+    pass
 
 
 
