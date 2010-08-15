@@ -1,16 +1,16 @@
 from django.contrib import admin
-from django.contrib.gis import admin
+from django.contrib.gis import admin as osmadmin
 from urban.models import *
-class PointResourceAdmin(admin.OSMGeoAdmin):
+class PointResourceAdmin(osmadmin.OSMGeoAdmin):
 	pass
 
-class LineResourceAdmin(admin.OSMGeoAdmin):
+class LineResourceAdmin(osmadmin.OSMGeoAdmin):
 	pass
 
-class PolygonResourceAdmin(admin.OSMGeoAdmin):
+class PolygonResourceAdmin(osmadmin.OSMGeoAdmin):
 	pass
 
-class ElementAdmin(admin.OSMGeoAdmin):
+class ElementAdmin(osmadmin.OSMGeoAdmin):
 	pass
 
 
