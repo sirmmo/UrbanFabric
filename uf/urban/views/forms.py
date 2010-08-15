@@ -8,6 +8,8 @@ from django.utils import simplejson
 from django.views.decorators.csrf import csrf_protect
 from urban.forms import *
 from urban.models import *
+from django.template.defaultfilters import slugify
+
 #users
 @csrf_protect
 def add_user(request):
@@ -27,6 +29,7 @@ def add_user(request):
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.add_user'),
                               'form': form,
+                              'form_id' : slugify(reverse('urban.views.forms.add_user'))
                               }, context_instance=RequestContext(request))
 
 
@@ -52,6 +55,7 @@ def login_user(request):
         return render_to_response('form.xml', {
                                   'action':reverse('urban.views.forms.login_user'),
                                   'form': form,
+                                  'form_id' : slugify(reverse('urban.views.forms.login_user'))
                                   }, context_instance=RequestContext(request))
 @login_required
 def del_user(request, username):
@@ -75,6 +79,7 @@ def add_venue(request):
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.add_venue'),
                               'form': form,
+                              'form_id' : slugify(reverse('urban.views.forms.add_venue'))
                               }, context_instance=RequestContext(request))
 
 @login_required
@@ -92,6 +97,7 @@ def edit_venue(request, id):
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.edit_venue'),
                               'form': form,
+                              'form_id' : slugify(reverse('urban.views.forms.edit_venue'))
                               }, context_instance=RequestContext(request))
 @login_required
 def add_group(request):
@@ -113,6 +119,7 @@ def add_group(request):
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.add_group'),
                               'form': form,
+                              'form_id' : slugify(reverse('urban.views.forms.add_group'))
                               }, context_instance=RequestContext(request))
 @login_required
 def edit_group(request):
@@ -134,4 +141,5 @@ def edit_group(request):
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.edit_group'),
                               'form': form,
+                              'form_id' : slugify(reverse('urban.views.forms.edit_group'))
                               }, context_instance=RequestContext(request))
