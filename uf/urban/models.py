@@ -85,7 +85,7 @@ class Classification(models.Model):
 class Production(models.Model):
     icon = models.ImageField(upload_to = "img/prods/")
     name=models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, blank = True)
     parent = models.ForeignKey('Production', blank = True, null=True, default = None)
 
     def __unicode__(self):
@@ -97,7 +97,7 @@ class Production(models.Model):
 #elements
 class Venue(PointResource):
     name = models.CharField(max_length=400)
-    slug = models.SlugField(max_length=400, unique=True)
+    slug = models.SlugField(max_length=400, unique=True, blank = True)
     description = models.TextField()
     manager = models.ForeignKey(User, related_name="manages_venues")
     classification = models.ManyToManyField(Classification, related_name="classifies")
@@ -105,6 +105,8 @@ class Venue(PointResource):
     bought_products = models.ManyToManyField(Production, related_name="bought", null=True, blank=True)
     opening = models.ManyToManyField('Interval', null=True, blank=True)
     links = models.ManyToManyField('Link', null=True, blank=True)
+    server = models.ForeignKey('TrustedServer', blank = True, null=True, default = None)
+    
     def __unicode__(self):
         return self.name
     def save(self):
@@ -126,7 +128,7 @@ class LinkFamily(models.Model):
 
 class CollectionClassification(models.Model):
     name=models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, blank = True)
     private = models.BooleanField(default = True)
     
     def __unicode__(self):
@@ -137,7 +139,7 @@ class CollectionClassification(models.Model):
         
 class ElementCollection(models.Model):
     name = models.CharField(max_length=400)
-    slug = models.SlugField(max_length=400, unique=True)
+    slug = models.SlugField(max_length=400, unique=True, blank = True)
     elements = models.ManyToManyField(Venue, related_name = "collections")
     manager = models.ForeignKey(User, related_name="manages_groups")
     classification = models.ManyToManyField(CollectionClassification)
