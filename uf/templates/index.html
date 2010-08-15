@@ -129,11 +129,89 @@ resize = function (sidebar) {
 	if (sidebar)
 		diff = $('#left-container').width();
 	$('#ufmap').width($(window).width()-diff);
-    $('#ufmap').height($(window).height());
-    $('#left-container').height($(window).height());
+    	$('#ufmap').height($(window).height());
+    	$('#left-container').height($(window).height());
 	$('#content').height($(window).height()-180);
 	$('#ufmap').css('left', diff)
+	refreshmap()
 }
+
+refreshmap = function(collection){
+	var default_mapstyle = [
+	{
+		featureType: "transit",
+    		elementType: "all",
+    		stylers: [
+      			{ saturation: 98 },
+      			{ hue: "#ff8c00" }
+    		]
+  	},{
+    		featureType: "road",
+    		elementType: "all",
+    		stylers: [
+      			{ hue: "#ff8c00" }
+    		]
+  	},{
+    		featureType: "landscape.man_made",
+    		elementType: "all",
+    		stylers: [
+      			{ saturation: 99 },
+      			{ hue: "#ff8c00 " },
+      			{ lightness: 1 },
+      			{ visibility: "simplified" }
+    		]
+  	},{
+    		featureType: "poi.business",
+    		elementType: "all",
+    		stylers: [
+      			{ saturation: 0 },
+      			{ lightness: 28 }
+    		]
+  	},{
+    		featureType: "all",
+    		elementType: "all",
+    		stylers: [
+      			{ saturation: 100 },
+      			{ lightness: 10 },
+      			{ gamma: 0.94 }
+    		]
+  	}];
+
+	
+	
+	if(collection){
+		}
+	else 
+		mapstyle = default_mapstyle;
+	
+    	var myOptions = {
+		zoom:16,
+		mapTypeControlOptions: {
+       			mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID, 'UF']
+    		},
+		mapTypeControl:true,
+		mapTypeControlOptions: {
+			style:google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+			position:google.maps.ControlPosition.TOP
+        	},
+		navigationControl:true,
+		navigationControlOptions: {
+			style:google.maps.NavigationControlStyle.SMALL,
+			position:google.maps.ControlPosition.BOTTOM
+        	},
+    	};
+	
+    	jQuery.ufmap = new google.maps.Map(document.getElementById("ufmap"), myOptions);
+	
+	jQuery.styledMapOptions = {
+		name: "UF"
+	}
+
+	var jayzMapType = new google.maps.StyledMapType(mapstyle, jQuery.styledMapOptions);
+
+	jQuery.ufmap.mapTypes.set('UF', jayzMapType);
+	jQuery.ufmap.setMapTypeId('UF');
+	}
 
 change_hash = function(hash){
 	if  (hash == undefined) {
@@ -162,16 +240,16 @@ change_hash = function(hash){
 
 jQuery.ufmap = null;
 localize = function(position) {
-    initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-    jQuery.ufmap.setCenter(initialLocation);
+    	initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+    	jQuery.ufmap.setCenter(initialLocation);
 }
 $(function() {
 	
-	   $("#menu-login").click(function(e) {
-                e.preventDefault();
+	$("#menu-login").click(function(e) {
+		e.preventDefault();
                 $("fieldset#signin_menu").toggle();
-                $(".signin").toggleClass("menu-open");
-            });
+                $("menu-login").toggleClass("menu-open");
+	});
 	
 	$('#popup').hide();
 	$('#left-container').hide();
@@ -179,77 +257,7 @@ $(function() {
 	resize(	jQuery.sidebar);
 	change_hash(window.location.hash.split('#')[1]);
 	$(window).resize(function(){resize(jQuery.sidebar)});
-    var browserSupportFlag =  new Boolean();
-	var mapstyle = [
-  {
-    featureType: "transit",
-    elementType: "all",
-    stylers: [
-      { saturation: 98 },
-      { hue: "#ff8c00" }
-    ]
-  },{
-    featureType: "road",
-    elementType: "all",
-    stylers: [
-      { hue: "#ff8c00" }
-    ]
-  },{
-    featureType: "landscape.man_made",
-    elementType: "all",
-    stylers: [
-      { saturation: 99 },
-      { hue: "#ff8c00 " },
-      { lightness: 1 },
-      { visibility: "simplified" }
-    ]
-  },{
-    featureType: "poi.business",
-    elementType: "all",
-    stylers: [
-      { saturation: 0 },
-      { lightness: 28 }
-    ]
-  },{
-    featureType: "all",
-    elementType: "all",
-    stylers: [
-      { saturation: 100 },
-      { lightness: 10 },
-      { gamma: 0.94 }
-    ]
-  }
-];
-
-
-	
-    var myOptions = {
-		zoom:16,
-		mapTypeControlOptions: {
-       mapTypeIds: [google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID, 'hiphop']
-    },
-		mapTypeControl:true,
-		mapTypeControlOptions: {
-			style:google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-			position:google.maps.ControlPosition.TOP
-        },
-		navigationControl:true,
-		navigationControlOptions: {
-			style:
-            google.maps.NavigationControlStyle.SMALL   ,
-position:
-            google.maps.ControlPosition.BOTTOM
-        },
-    };
-    jQuery.ufmap = new google.maps.Map(document.getElementById("ufmap"), myOptions);
-	var styledMapOptions = {
-		name: "UF"
-	}
-
-	var jayzMapType = new google.maps.StyledMapType(mapstyle, styledMapOptions);
-
-	jQuery.ufmap.mapTypes.set('UF', jayzMapType);
-	jQuery.ufmap.setMapTypeId('UF');
+    	
 	if (navigator.geolocation) {
         jQuery.watcher = navigator.geolocation.watchPosition(localize, handleNoGeolocation);
 
