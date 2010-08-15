@@ -20,3 +20,7 @@ class LogInForm(forms.Form):
 class VenueForm(ModelForm):
     class Meta:
         model = Venue
+
+class VenueCollectionForm(ModelForm):
+    class Meta:
+        model = ElementCollection
