@@ -7,13 +7,14 @@ from django.views.decorators.csrf import csrf_protect
 from urban.forms import *
 from urban.models import *
 
-def serializable(object):
+def serializable(object, level = 0):
     o = {}
     for k in object.__dict__:
         if not str(k).startswith('_'):
             val = getattr(object, k, None)
-            if  str(val.__class__.__name__) not in ['int', 'unicode', 'bool']:
-                val = serializable(val)
+            print val.__class__.__name__
+            if  str(val.__class__.__name__) not in ['int', 'unicode', 'bool', 'basestring']:
+                val = serializable(val, level+1)
             o[k] = val
     return o
 
@@ -71,3 +72,11 @@ def messages_by_point(request):
 
 def ical_by_id(request):
     pass
+
+
+def mapstyle_by_collection(request, collection_name):
+    t = ElementCollection.objects.get(slug=collection_name)
+    return render_to_string('mapstyle.json',{'color':t.color_code_back})
+
+
+

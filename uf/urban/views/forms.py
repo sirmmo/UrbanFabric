@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
@@ -7,7 +8,6 @@ from django.utils import simplejson
 from django.views.decorators.csrf import csrf_protect
 from urban.forms import *
 from urban.models import *
-
 #users
 @csrf_protect
 def add_user(request):
@@ -53,7 +53,7 @@ def login_user(request):
                                   'action':reverse('urban.views.forms.login_user'),
                                   'form': form,
                                   }, context_instance=RequestContext(request))
-
+@login_required
 def del_user(request, username):
     if request.method == 'POST':
         r = request.REQUEST.get('user', "")
@@ -61,38 +61,39 @@ def del_user(request, username):
             User.object.get(username=username).delete()
 
 #venues
+@login_required
 def add_venue(request):
     from django.core.urlresolvers import reverse
-    if request.method == 'POST': # If the form has been submitted...
-        form = VenueForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
+    if request.method == 'POST': 
+        form = VenueForm(request.POST) 
+        if form.is_valid():
             form.save()
             return HttpResponse('OK')
     else:
-        form = VenueForm() # An unbound form
+        form = VenueForm()
 
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.add_venue'),
                               'form': form,
                               }, context_instance=RequestContext(request))
 
-    
+@login_required
 def edit_venue(request, id):
     from django.core.urlresolvers import reverse
-    if request.method == 'POST': # If the form has been submitted...
-        form = VenueForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
+    if request.method == 'POST': 
+        form = VenueForm(request.POST) 
+        if form.is_valid(): 
             form.save()
             return HttpResponse('OK')
     else:
         v = Venue.objects.get(id=id)
-        form = VenueForm(instance=v) # An unbound form
+        form = VenueForm(instance=v) 
 
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.edit_venue'),
                               'form': form,
                               }, context_instance=RequestContext(request))
-
+@login_required
 def add_group(request):
     from django.core.urlresolvers import reverse
     if request.method == 'POST': # If the form has been submitted...
@@ -107,19 +108,20 @@ def add_group(request):
             u.save()
             return HttpResponse('OK')
     else:
-        form = SignUpForm() # An unbound form
+        form = SignUpForm()
 
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.add_group'),
                               'form': form,
                               }, context_instance=RequestContext(request))
+@login_required
 def edit_group(request):
     from django.core.urlresolvers import reverse
-    if request.method == 'POST': # If the form has been submitted...
-        form = SignUpForm(request.POST) # A form bound to the POST data
+    if request.method == 'POST': 
+        form = SignUpForm(request.POST)
         print('asd')
         print(dir(form))
-        if form.is_valid(): # All validation rules pass
+        if form.is_valid(): 
             u = User()
             u.username = form.cleaned_data['username']
             u.password = form.cleaned_data['password1']
@@ -127,7 +129,7 @@ def edit_group(request):
             u.save()
             return HttpResponse('OK')
     else:
-        form = SignUpForm() # An unbound form
+        form = SignUpForm() 
 
     return render_to_response('form.xml', {
                               'action':reverse('urban.views.forms.edit_group'),

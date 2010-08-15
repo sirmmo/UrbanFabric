@@ -6,7 +6,7 @@ from django.core import serializers
 from urban.forms import *
 from django.views.decorators.csrf import csrf_protect
 from django.template import RequestContext
-
+import httplib, urllib
 def add(request):
     addr = request.REQUEST.get('remote_url', "")
     if addr != "":
@@ -14,9 +14,15 @@ def add(request):
         s.ping_url = addr
         s.save()
 
-        #send XUF trust request
-    pass
-
 def ping(request):
-    #receive XUF ping
-    pass
+    if request.method == 'GET':
+        return HttpResponse('I ping, therefore I am')
+    else:
+        pass
+    
+
+def send_ping(content):
+    for server in TrustedServer.objects.all():
+        params = urllib.urlencode({'payload':content})
+        conn = httplib.HTTPConnection(server.ping_url)
+        conn.request("POST", "/cgi-bin/query", params, headers)
