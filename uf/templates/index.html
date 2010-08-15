@@ -9,8 +9,11 @@
 <link href='http://fonts.googleapis.com/css?family=Josefin+Sans+Std+Light' rel='stylesheet' type='text/css'/>
 <script src="/static/jquery.js" type="text/javascript"> </script>
 <script src="/static/bnhash.js" type="text/javascript"> </script>
+<script src="/static/jquery-ui.js" type="text/javascript"> </script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 <style type="text/css">
+
+@import('/static/jquery-ui.css');
 body {
 	margin: 0 0 0 0;
 	background-color: transparent;
@@ -20,11 +23,12 @@ body {
 	right:0;
 	position:absolute;
 }
- #header: {
- top:0px;
- width:100%;
- height:150px;
+#header: {
+ 	top:0px;
+	width:100%;
+ 	height:150px;
 }
+
 #header-decoration {
 	z-index:1000;
 	width:100%;
@@ -34,15 +38,16 @@ body {
 	left:0;
 	background-color:orange;
 }
-#header-image {
+#header-img {
 	z-index:1100;
 	width:150px;
 	height:150px;
 	top:5px;
 	left:5px;
 	position:absolute;
-	background-image: url('/static/imgs/UF_flat.png');
 	background-repeat: no-repeat;
+	background-image:url('/static/imgs/UF_flat.png');
+	background-size:150px 150px;
 }
 #header-text {
 	z-index:1100;
@@ -105,7 +110,7 @@ body {
 <div id="ufmap"></div>
 <div id="header">
         <div id="header-decoration"></div>
-        <div id="header-image"></div>
+        <div id="header-img"></div>
         <div id="header-text">UrbanFabric<span id="collection-name"></span></div>
         <div id="header-menu">
                 <div id="menu-login" class="menu-item" title="Login">
@@ -179,6 +184,7 @@ refreshmap = function(collection){
     		]
   	}];
 	
+	console.debug(collection);
 	if(collection){
 		$.getJSON('collection/'+collection+'/mapstyle', function(data){
 			run_refresh(data);
@@ -189,7 +195,7 @@ refreshmap = function(collection){
 	}
 	
 run_refresh = function(mapstyle){
-	
+	console.debug(mapstyle);
     	var myOptions = {
 		zoom:16,
 		mapTypeControlOptions: {
@@ -220,58 +226,67 @@ run_refresh = function(mapstyle){
 	}
 
 change_hash = function(hash){
-	if  (hash == undefined) {
+	if  (hash == undefined || hash == "") {
 		$('#left-container').show();
 		jQuery.sidebar = true;
 		resize(	jQuery.sidebar);
 		refreshmap();
+		console.debug($('#header-img'));
+		$('#header-image').css('background-image', "url('"+jQuery.logo_default+"')");
 	} else{
 		$('#left-container').hide();
 		jQuery.sidebar = false;
+		resize(	jQuery.sidebar);
 		list 	= hash.split("/");
 		count = list.length;
-		if (count >0)
+		if (count >0){
 			var collection = list[0];
-		if (jQuery.old_collection != collection){
-			jQuery.old_collection = collection;
-			var collection_url = '/collection/'+collection;
-			$.getJSON(collection_url, function(data){
-				console.debug(data);
-				$('#collection-name').text(": " + data[0].fields.name);
-			});
-			$.getJSON(collection_url+"/contents", function(data){
-				for (el in data){
-					render_marker(data[el]);
-				}
-			});
+			if (jQuery.old_collection != collection){
+				jQuery.old_collection = collection;
+				var collection_url = '/collection/'+collection+"/";
+				$.getJSON(collection_url, function(data){
+					$('#collection-name').text(": " + data[0].fields.name);
+					$('#header-img').css('background-image', "url('/static/uploads/"+data[0].fields.icon+"')");
+				});
+				$.getJSON(collection_url+"contents", function(data){
+					for (el in data){
+						render_marker(data[el]);
+					}
+				});
+			}
+			refreshmap(collection);
 		}
 		if (count >1)
 		var item = list[1];
 		//get item data and display it
 	}
-	
-		resize(	jQuery.sidebar);
-		refreshmap(collection);
-
 }
+jQuery.association={}
 
 render_marker = function(element){
-	console.debug('rendering element')
-	console.debug(element)
 	var myLatLng = new google.maps.LatLng(element.latitude, element.longitude);
 	var marker = new google.maps.Marker({
       		position: myLatLng, 
       		map: jQuery.ufmap, 
       		title:"Hello World!"
   	});   
+	marker.setClickable(true);
+	jQuery.association[marker] = element;
 }
 
 jQuery.ufmap = null;
+jQuery.mylocation = null;
 localize = function(position) {
-    	initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-    	jQuery.ufmap.setCenter(initialLocation);
+	initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+	if (jQuery.mylocation == null){
+    		jQuery.ufmap.setCenter(initialLocation);
+	}
+	jQuery.mylocation = initialLocation;
 }
+
+jQuery.logo_default = '/static/imgs/UF_flat.png';
 $(function() {
+	
 	
 	$("#menu-login").click(function(e) {
 		e.preventDefault();
@@ -288,20 +303,26 @@ $(function() {
 	$(window).resize(function(){resize(jQuery.sidebar)});
     	
 	if (navigator.geolocation) {
-        jQuery.watcher = navigator.geolocation.watchPosition(localize, handleNoGeolocation);
-    } else {
-        handleNoGeolocation();
-    }
+        	jQuery.watcher = navigator.geolocation.watchPosition(localize, handleNoGeolocation);
+	} else {
+        	handleNoGeolocation();
+    	}
 
-    function handleNoGeolocation() {
+    	function handleNoGeolocation() {
 
-    }
-jQuery.old_collection = "";
-    $( window.location ).bind("change",
-function(e, d){
-change_hash(d.currentHash);
+    	}
+	jQuery.old_collection = "";
+	 $( window.location ).bind("change",
+		function(e, d){
+		change_hash(d.currentHash);
+	});
+	$('#menu-position').click(function(){
+		jQuery.ufmap.panTo(jQuery.mylocation);	
+	});
+	$('#menu-login').click(function(){
+		$('#popup').dialog();
+	});
 });
-                          });
 </script>
 </body>
 </html>
