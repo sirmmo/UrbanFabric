@@ -124,6 +124,9 @@ body {
 </div>
 <div id="searchbox"></div>
 <script>
+
+
+
 resize = function (sidebar) {
 	var diff = 0;
 	if (sidebar)
@@ -133,7 +136,6 @@ resize = function (sidebar) {
     	$('#left-container').height($(window).height());
 	$('#content').height($(window).height()-180);
 	$('#ufmap').css('left', diff)
-	refreshmap()
 }
 
 refreshmap = function(collection){
@@ -176,13 +178,17 @@ refreshmap = function(collection){
       			{ gamma: 0.94 }
     		]
   	}];
-
-	
 	
 	if(collection){
+		$.getJSON('collection/'+collection+'/mapstyle', function(data){
+			run_refresh(data);
+		});
 		}
 	else 
-		mapstyle = default_mapstyle;
+		run_refresh(default_mapstyle);
+	}
+	
+run_refresh = function(mapstyle){
 	
     	var myOptions = {
 		zoom:16,
@@ -217,6 +223,8 @@ change_hash = function(hash){
 	if  (hash == undefined) {
 		$('#left-container').show();
 		jQuery.sidebar = true;
+		resize(	jQuery.sidebar);
+		refreshmap();
 	} else{
 		$('#left-container').hide();
 		jQuery.sidebar = false;
@@ -226,16 +234,36 @@ change_hash = function(hash){
 			var collection = list[0];
 		if (jQuery.old_collection != collection){
 			jQuery.old_collection = collection;
-			$.getJSON('/collection/'+collection, function(data){
+			var collection_url = '/collection/'+collection;
+			$.getJSON(collection_url, function(data){
 				console.debug(data);
-				$('#collection-name').text(": " + data.main.name);
+				$('#collection-name').text(": " + data[0].fields.name);
+			});
+			$.getJSON(collection_url+"/contents", function(data){
+				for (el in data){
+					render_marker(data[el]);
+				}
 			});
 		}
 		if (count >1)
 		var item = list[1];
 		//get item data and display it
 	}
-	resize(	jQuery.sidebar);
+	
+		resize(	jQuery.sidebar);
+		refreshmap(collection);
+
+}
+
+render_marker = function(element){
+	console.debug('rendering element')
+	console.debug(element)
+	var myLatLng = new google.maps.LatLng(element.latitude, element.longitude);
+	var marker = new google.maps.Marker({
+      		position: myLatLng, 
+      		map: jQuery.ufmap, 
+      		title:"Hello World!"
+  	});   
 }
 
 jQuery.ufmap = null;
@@ -251,6 +279,7 @@ $(function() {
                 $("menu-login").toggleClass("menu-open");
 	});
 	
+	refreshmap();
 	$('#popup').hide();
 	$('#left-container').hide();
 	jQuery.sidebar = false;
@@ -260,8 +289,6 @@ $(function() {
     	
 	if (navigator.geolocation) {
         jQuery.watcher = navigator.geolocation.watchPosition(localize, handleNoGeolocation);
-
-        // Browser doesn't support Geolocation
     } else {
         handleNoGeolocation();
     }
