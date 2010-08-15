@@ -23,8 +23,8 @@ urlpatterns = patterns('',
     (r'^show/collections/$', 'urban.views.collections.all_colls'),
 
     #getters
-    (r'^tag/(?P<tag_name>\[-w]*)/$', 'urban.views.getters.by_tag'),
-    (r'^prod/(?P<classification_name>\[-\w]*)/$', 'urban.views.getters.by_classification'),
+    (r'^prod/(?P<tag_name>\[-w]*)/$', 'urban.views.getters.by_tag'),
+    (r'^class/(?P<classification_name>\[-\w]*)/$', 'urban.views.getters.by_classification'),
     (r'^cf/(?P<id>\d+)$', 'urban.views.getters.to_collection_id'),
     (r'^collection/(?P<collection_name>[-\w]*)/$', 'urban.views.getters.on_collection'),
     (r'^collection/(?P<collection_name>[-\w]*)/contents$', 'urban.views.getters.collection_contents'),
@@ -40,6 +40,10 @@ urlpatterns = patterns('',
     #messages
     (r'^messages/$', 'urban.views.getters.messages_by_point'),
 
+    #filter
+    (r'^filter/(?P<mode>\w{2})/(?P<filter>.*)$', 'urban.views.filter'),
+    (r'^filter/(?P<mode>\w{2})/(?P<filter>.*)$', 'urban.views.filter'),
+    (r'^filter/(?P<mode>\w{2})/(?P<filter>.*)$', 'urban.views.filter'),
    
     (r'^xuf/addurl/$', 'urban.views.xuf.add'),
     (r'^xuf/ping/$', 'urban.views.xuf.ping'),
