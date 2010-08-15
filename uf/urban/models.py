@@ -115,10 +115,14 @@ class Venue(PointResource):
 class Link(models.Model):
     url = models.URLField(verify_exists=True)
     type = models.ForeignKey('LinkFamily')
+    def __unicode__(self):
+        return self.url
 
 class LinkFamily(models.Model):
     name=models.CharField(max_length = 150)
     icon = models.ImageField(upload_to = "img/links/")
+    def __unicode__(self):
+        return self.name
 
 class CollectionClassification(models.Model):
     name=models.CharField(max_length=200)
