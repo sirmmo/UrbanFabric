@@ -233,6 +233,9 @@ run_refresh = function(mapstyle){
 
 	jQuery.ufmap.mapTypes.set('UF', jayzMapType);
 	jQuery.ufmap.setMapTypeId('UF');
+	
+	
+	
 	}
 
 change_hash = function(hash){
@@ -268,8 +271,9 @@ change_hash = function(hash){
 		}
 		if (count >1)
 		var item = list[1];
-		//get item data and display it
+		//get item data and display 
 	}
+	
 }
 jQuery.association={}
 
@@ -296,9 +300,41 @@ localize = function(position) {
 
 jQuery.logo_default = '/static/imgs/UF_flat.png';
 
-render = function(type, element){
+render_stuff = function(container){
+	
+	var page = "<ul>@@row@@</ul>";
+	
+	var row = "<li>@@name@@<ul>@@ctt@@</ul></li>@@row@@";
 	
 	var template = "<a href='#@@url@@'>@@name@@</a>";
+	
+	page = page.replace('@@row@@', row);
+	page = page.replace('@@name@@', 'Tags');
+	$.getJSON('/show/tags/', function(data){
+		for (el in data){
+			it = data[el];
+			render('tag', it, template);
+		}
+	});
+	$.getJSON('/show/collections/', function(data){
+		for (el in data){
+			it = data[el];
+			render('collection', it);
+		}
+	});
+	$.getJSON('/show/prods/', function(data){
+		for (el in data){
+			it = data[el];
+			render('prod', it);
+		}
+	});
+	
+	page = page.replace('@@row@@', '');
+	
+}
+
+
+render = function(type, element, template){
 	
 	switch (type){
 		
@@ -321,25 +357,11 @@ render = function(type, element){
 		}
 		
 		*/
-		case "tag":{}
-		/*
-		
-			{
-			"pk": 1, 
-			"model": "urban.classification", 
-			"fields": {
-				"suggested_products": [2], 
-				"public_service": false, 
-				"parent": null, 
-				"abstract": false, 
-				"commercial": true, 
-				"icon": "img/class/icon.png", 
-				"slug": "pub", 
-				"name": "Pub"
+		case "tag":{
+			template = template.replace('@@name@@', tupe['fields']['name']);
+			return template;
 			}
-		}
 		
-		*/
 		case "collection":{}
 		/*
 		{
@@ -375,6 +397,18 @@ sendpos = function(){
 	});
 }
 
+get_area = function(){
+	$.getJSON('/area/',
+	{
+		
+		'sw':JSON.stringify(jQuery.ufmap.getBounds().getSouthWest()),
+		'ne':JSON.stringify(jQuery.ufmap.getBounds().getNorthEast()),
+	}, function(data){
+		for (el in data){
+						render_marker(data[el]);
+					}
+	});
+}
 
 $(function() {
 	
@@ -418,28 +452,9 @@ $(function() {
 			draggable:false
 		});
 	});
+	 render_stuff($('#content'));
 	
 	
-	$.getJSON('/show/tags/', function(data){
-		for (el in data){
-			it = data[el];
-			render('tag', it);
-		}
-	});
-	$.getJSON('/show/collections/', function(data){
-		for (el in data){
-			it = data[el];
-			render('collection', it);
-		}
-	});
-	$.getJSON('/show/prods/', function(data){
-		for (el in data){
-			it = data[el];
-			render('prod', it);
-		}
-	});
-	
-	$.getJSON('/area/');
 	
 	$('form').live('submit', function(){
 		$(this).ajaxSubmit({
@@ -451,6 +466,7 @@ $(function() {
 		return false;
 	});
 	setInterval(function(){sendpos();}, 5000);
+	setTimeout(function(){get_area();}, 1000);
 });
 </script>
 </body>

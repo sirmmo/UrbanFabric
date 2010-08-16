@@ -1,5 +1,4 @@
 from cmath import sqrt
-from uf.urban.models import InterestArea
 import json
 
 from django.core import serializers
@@ -11,6 +10,7 @@ from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.views.decorators.csrf import csrf_protect
 from settings import DEBUG
+from uf.urban.models import InterestArea
 from urban.forms import *
 from urban.models import *
 
@@ -43,7 +43,7 @@ def by_classification(request, classification_name):
     filtered = [] #bbox, page, etc...
     for s in t.classifies.all():
         filtered.append(s)
-    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products', 'parent',)}, 'products':{'excludes':('parent',)}}, indent=4)
+    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products', 'parent', )}, 'products':{'excludes':('parent', )}}, indent=4)
     return HttpResponse(filtered, mimetype="application/json")
 
 def on_collection(request, collection_name):
@@ -73,7 +73,7 @@ def by_point(request, point):
     filtered = [] #bbox, page, etc...
     for s in t.sold.all():
         filtered.append(s.__dict__)
-    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products', 'parent',)}, 'products':{'excludes':('parent',)}}, indent=4)
+    filtered = serializers.serialize("json", filtered, relations={'classification':{'excludes':('suggested_products', 'parent', )}, 'products':{'excludes':('parent', )}}, indent=4)
     return HttpResponse(filtered, mimetype="application/json")
 
 
@@ -99,24 +99,24 @@ def messages_by_point(request):
         point = Point(point['c'], point['b'])
         time = request.REQUEST.get('time', None)
         if not (point == None or time == None):
-            ias = InterestArea.objects.all().values('wkt', 'element_id','radius', 'id',)
-            
+            ias = InterestArea.objects.all().values('wkt', 'element_id', 'radius', 'id', )
+            print point
 
             def proc(el):
-#                print point.x
-#                print point.y
+                #                print point.x
+                #                print point.y
                 p2 = fromstr(el['wkt'])
-#                print p2.x
-#                print p2.y
-                dist = sqrt((point.y-p2.y)**2+((point.x-p2.x)*math.cos(point.y*2*math.pi/360))**2) *111000
+                #                print p2.x
+                #                print p2.y
+                dist = sqrt((point.y-p2.y) ** 2 + ((point.x-p2.x) * math.cos(point.y * 2 * math.pi / 360)) ** 2) * 111000
                 dist = dist.real
-#                print dist
+                #                print      dist
                 if dist < el['radius']:
                     el['geo'] = fromstr(el['wkt'])
                     return el
             ias = map(proc, ias)
-#            print ias
-            ms = Message.objects.filter(area__id__in = [i['id'] for i in ias]).values('text', 'area__element__name')
+            #            print ias
+            ms = Message.objects.filter(area__id__in=[i['id'] for i in ias]).values('text', 'area__element__name')
             def resp(el):
                 el['name'] = str(el['area__element__name'])
                 del el['area__element__name']
@@ -133,8 +133,29 @@ def ical_by_id(request):
 
 
 def area(request):
-    pass
-
+    ne = request.REQUEST.get('ne')
+    ne = simplejson.loads(ne)
+    ne = Point(ne['c'], ne['b'])
+    sw = request.REQUEST.get('sw')
+    sw = simplejson.loads(sw)
+    sw = Point(sw['c'], sw['b'])
+    print ne
+    print sw
+    nw = Point(ne.x, sw.y)
+    print nw
+    se = Point(sw.x, ne.y)
+    print se
+    p = Polygon([ne, se, sw, nw, ne])
+    print p
+    t = Venue.objects.filter(geolocation__contained = p)
+    a = [serializable(x) for x in t]
+    def polish(stuff):
+        del stuff['geolocation']
+        del stuff['wkt']
+        return stuff
+    a = map(polish, a)
+    return HttpResponse(simplejson.dumps(a), mimetype="application/json")
+    
 
 
 

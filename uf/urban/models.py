@@ -106,7 +106,9 @@ class Venue(PointResource):
     opening = models.ManyToManyField('Interval', null=True, blank=True)
     links = models.ManyToManyField('Link', null=True, blank=True)
     server = models.ForeignKey('TrustedServer', blank = True, null=True, default = None)
-    
+
+    objects = gismodels.GeoManager()
+
     def __unicode__(self):
         return self.name
     def save(self):
