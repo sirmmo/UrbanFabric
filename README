@@ -1,5 +1,10 @@
 === Installation Instructions ===
 
+for buildout or pip to work the headers installed must be:
+    python-dev
+    python-all-dev
+    postgresql-server-dev-8.4
+
 this app requires GDAL to be installed 
     in ubuntu
         apt-get install gdal-bin python-gdal
