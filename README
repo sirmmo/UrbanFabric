@@ -1,8 +1,13 @@
 === Installation Instructions ===
 
-this app requires GDAL to be installed (in ubuntu apt-get install gdal-bin python-gdal)
+this app requires GDAL to be installed 
+    in ubuntu
+        apt-get install gdal-bin python-gdal
 
 the database must be geographic and support distance calculations:
-    createlang -U postgres -d uf plpgsql
-    psql -U postgres -d uf -f /usr/share/postgresql-8.4-postgis/lwpostgis.sql
-    psql -U postgres -d uf -f /usr/share/postgresql-8.4-postgis/spatial_ref_sys.sql
+        psql -U postgres
+            create database uf;
+            /d
+        createlang -U postgres -d uf plpgsql
+        psql -U postgres -d uf -f /usr/share/postgresql-8.4-postgis/lwpostgis.sql
+        psql -U postgres -d uf -f /usr/share/postgresql-8.4-postgis/spatial_ref_sys.sql
